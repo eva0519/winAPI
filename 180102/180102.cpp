@@ -78,7 +78,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_MY180102));
     wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
     wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
-    wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_MY180102);
+    wcex.lpszMenuName = NULL;// MAKEINTRESOURCEW(IDC_MY180102);
     wcex.lpszClassName  = szWindowClass;
     wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
@@ -144,11 +144,38 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
         }
         break;
+        // 키가 눌러졌을때 들어오는 메세지이다.
+    case WM_KEYDOWN:
+        // 이 메세지가 들어올 경우 wParam에 어떤 키를 눌렀는지가
+        // 들어온다. WM_KEYDOWN은 어떤키가 됬건 누르면 들어오고
+        // wParam에는 어떤키인지 구분하는 값이 들어온다.
+        switch (wParam)
+        {
+        case VK_ESCAPE:
+            DestroyWindow(hWnd);
+            break;
+        }
+	    break;
     case WM_PAINT:
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
-            // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
+            // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다.
+
+            // 유니코드 문자열은 "" 앞에 L을 붙여서 L"" 로 해줄 수 있다.
+            // 아니면 TEXT 매크로를 이용한다. TEXT 매크로는 내부적으로 유니코드와 멀티바이트를 구분한다.
+            TextOut(hdc, 50, 50, TEXT("win32"), 5);
+            TextOut(hdc, 150, 50, TEXT("win32"), 5);
+            TextOut(hdc, 250, 50, TEXT("win32"), 5);
+
+            // 사각형 그리기 : Left, Top  Right, Bottom 점을 잡아서 사각형을
+            // 그려준다.
+            Rectangle(hdc, 100, 100, 200, 200);
+
+            // 선 그리기
+            MoveToEx(hdc, 300, 100, NULL);
+            LineTo(hdc, 400, 150);
+            
             EndPaint(hWnd, &ps);
         }
         break;
